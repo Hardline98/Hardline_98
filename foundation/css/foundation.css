@@ -37,6 +37,9 @@ html, body {
 html,
 body {
   font-size: 100%; }
+  
+.specialAnchor {
+  color: #B8B8B8; }
 
 body {
   background: #FF4D4D;

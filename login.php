@@ -60,12 +60,43 @@ if(isset($_COOKIE['session'])){
 	";
 }
 
+//Check the account
+require_once('inc/db_con.php');
+if(isset($_COOKIE['session'])){
+	$sql = mysql_query("SELECT * FROM  `hardline`.`clients` WHERE cid LIKE '%$sCookie%'") or trigger_error(mysql_error().$sql);;
+	$numrows = mysql_num_rows($sql);
+	if($numrows != 0){
+		while($rows = mysql_fetch_assoc($sql)){
+			$db_client_id = $rows['cid'];
+			$db_active = $rows['active'];
+		}
+		if($db_active == 0){
+			$alert = '<br/><div data-alert class="alert-box warning" style="margin-left:100px;margin-right:100px;">
+			You have not yet validated your account. If you did not receive your email, click <a class="specialAnchor" href="#">here</a>.
+			<a href="#" onclick="closeAlertBox()" class="close">&times;</a>
+			</div>';
+		}
+	}else{
+		$alert = '<br/><div data-alert class="alert-box" style="margin-left:100px;margin-right:100px;">
+		There was a serious database error, please reload and try again!
+		<a href="#" onclick="closeAlertBox()" class="close">&times;</a>
+		</div>';
+	}
+}else{
+	$alert = "";
+}
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hardline98 | Login</title>
-<link rel="stylesheet" href="foundation/css/foundation.css" />
+	<title>Hardline98 | Login</title>
+	<link rel="stylesheet" href="foundation/css/foundation.css" />
+	<script>
+		function closeAlertBox(){
+			$(".alert-box").fadeOut("slow");
+		}
+	</script>
 </head>
 <body>
 
@@ -107,6 +138,7 @@ include_once('inc/page_head.inc');
 		</section>
 	</nav>
 </div>
+<?php echo $alert; ?>
 
 <?php
 

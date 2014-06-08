@@ -8,7 +8,7 @@ if(isset($_COOKIE["session"])){
 session_start();
 
 if(isset($_COOKIE['session'])){
-	$infos = "<li><a href='account.php'>Account</a></li>\n
+	$infos = "<li><a href='account.php?u=".strtolower($sCookie)."'>Account</a></li>\n
 	<li><a href='client.php'>Client Area</a></li>\n
 	<li><a href='contact.php'>Contact Us</a></li>\n
 	<li><a href='scripts/logout.php'>Sign Out</a></li>\n";
@@ -22,6 +22,32 @@ if(isset($_COOKIE['session'])){
 	$isLoggedInInfos = "";
 }
 
+//Check the account
+require_once('inc/db_con.php');
+if(isset($_COOKIE['session'])){
+	$sql = mysql_query("SELECT * FROM  `hardline`.`clients` WHERE cid LIKE '%$sCookie%'") or trigger_error(mysql_error().$sql);;
+	$numrows = mysql_num_rows($sql);
+	if($numrows != 0){
+		while($rows = mysql_fetch_assoc($sql)){
+			$db_client_id = $rows['cid'];
+			$db_active = $rows['active'];
+		}
+		if($db_active == 0){
+			$alert = '<br/><div data-alert class="alert-box warning" style="margin-left:100px;margin-right:100px;">
+			You have not yet validated your account. If you did not receive your email, click <a class="specialAnchor" href="#">here</a>.
+			<a href="#" onclick="closeAlertBox()" class="close">&times;</a>
+			</div>';
+		}
+	}else{
+		$alert = '<br/><div data-alert class="alert-box" style="margin-left:100px;margin-right:100px;">
+		There was a serious database error, please reload and try again!
+		<a href="#" onclick="closeAlertBox()" class="close">&times;</a>
+		</div>';
+	}
+}else{
+	$alert = "";
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,6 +56,11 @@ if(isset($_COOKIE['session'])){
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="stylesheet" href="foundation/css/foundation.css" />
 	<title>Hardline98 | Home</title>
+	<script>
+		function closeAlertBox(){
+			$(".alert-box").fadeOut("slow");
+		}
+	</script>
 </head>
 <body>
 
@@ -67,7 +98,7 @@ if(isset($_COOKIE['session'])){
 		</section>
 	</nav>
 </div>
-<?php //print_r($_COOKIE); ?>
+<?php echo $alert; ?>
 
 <script type="text/javascript" src="foundation/js/vendor/jquery.js"></script>
 <script type="text/javascript" src="foundation/js/foundation/foundation.js"></script>
