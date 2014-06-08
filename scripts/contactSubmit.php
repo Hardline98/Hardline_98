@@ -37,11 +37,6 @@ if($fname == ""){
 	$msg = mysql_real_escape_string($msg);
 	echo "<br />Password: ".$pass;
 	
-	//Hashing
-	$enc = "sha512";
-	$cid = hash($enc,$cid);
-	$pass = hash($enc,$pass);
-	echo "<br />Password: ".$pass;
 	
 	//Inserting into the database
 	require_once('../inc/db_con.php');
